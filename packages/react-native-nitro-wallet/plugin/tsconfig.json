@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "composite": false,
+    "declaration": true,
+    "declarationMap": false,
+    "module": "Node16",
+    "moduleResolution": "node16",
+    "outDir": "build",
+    "rootDir": "src",
+    "sourceMap": false,
+    "target": "es2019",
+    "verbatimModuleSyntax": false
+  }
+}

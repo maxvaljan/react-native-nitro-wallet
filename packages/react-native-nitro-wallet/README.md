@@ -27,9 +27,9 @@ Run your normal native install, prebuild, or development-build flow after instal
 
 ### Expo
 
-No Expo config plugin is required. The package does not add iOS entitlements, Android permissions,
-or manifest entries; native integration is handled by React Native autolinking plus Nitro's generated
-autolinking files.
+No Expo config plugin is required for the standard Apple Wallet add-pass flow, Google Wallet save
+flow, or native module linking. React Native autolinking plus Nitro's generated autolinking files
+handle the native integration.
 
 For Expo apps, install the package and run your usual prebuild or development-build workflow:
 
@@ -37,6 +37,27 @@ For Expo apps, install the package and run your usual prebuild or development-bu
 bun add react-native-nitro-wallet react-native-nitro-modules
 bun expo prebuild
 ```
+
+The package also ships an optional config plugin for iOS Wallet pass-library access. Use it only
+when your app needs Apple pass type identifiers for querying, opening, removing, or otherwise
+managing passes exposed by PassKit:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-nitro-wallet",
+        {
+          "passTypeIdentifiers": ["$(TeamIdentifierPrefix)*"]
+        }
+      ]
+    ]
+  }
+}
+```
+
+The plugin does not modify Android configuration.
 
 ### iOS notes
 

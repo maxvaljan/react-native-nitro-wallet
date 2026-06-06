@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "specs": "bun run --cwd packages/react-native-nitro-wallet specs",
-    "check": "bun run specs && bun run --cwd packages/react-native-nitro-wallet typecheck && bun run --cwd packages/react-native-nitro-wallet lint-ci && bun run --cwd apps/example lint && bunx tsc --noEmit -p apps/example/tsconfig.json && bun run test",
+    "check": "bun run specs && bun run --cwd packages/react-native-nitro-wallet build:plugin && bun run --cwd packages/react-native-nitro-wallet typecheck && bun run --cwd packages/react-native-nitro-wallet lint-ci && bun run --cwd apps/example lint && bunx tsc --noEmit -p apps/example/tsconfig.json && bun run test",
     "example": "bun run --cwd apps/example",
     "example:android": "bun run --cwd apps/example android",
     "example:ios": "bun run --cwd apps/example ios",
