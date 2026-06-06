@@ -1,0 +1,56 @@
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  js:
+    name: TypeScript, lint, tests, pack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: bun run --cwd packages/react-native-nitro-wallet pack:dry-run
+
+  android:
+    name: Android example build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+      - run: yes | sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0" "cmake;3.22.1" "ndk;27.1.12297006"
+      - run: bun install --frozen-lockfile
+      - run: ./gradlew assembleDebug --no-daemon
+        working-directory: apps/example/android
+
+  ios:
+    name: iOS NitroWallet pod build
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bundle install
+        working-directory: apps/example
+      - run: bundle exec pod install
+        working-directory: apps/example/ios
+      - run: |
+          xcodebuild \
+            -workspace WalletExample.xcworkspace \
+            -scheme NitroWallet \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+        working-directory: apps/example/ios

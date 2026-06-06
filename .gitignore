@@ -1,0 +1,29 @@
+node_modules/
+bun.lockb
+.env
+.env.*
+!.env.example
+
+# React Native / native build output
+android/.gradle/
+android/build/
+ios/Pods/
+ios/build/
+DerivedData/
+
+# Example app generated output
+apps/example/android/.gradle/
+apps/example/android/build/
+apps/example/android/app/build/
+apps/example/ios/Pods/
+apps/example/ios/build/
+
+# Package build output that should be regenerated
+packages/*/android/build/
+packages/*/node_modules/
+packages/*/tsconfig.tsbuildinfo
+
+# Local artifacts
+*.tgz
+*.xcresult
+.DS_Store
