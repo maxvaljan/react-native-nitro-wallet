@@ -1,55 +1,41 @@
-name: Check
+name: Release
 
 on:
-  pull_request:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "SemVer increment or exact version passed to release-it"
+        required: true
+        default: "patch"
+
+permissions:
+  contents: write
+  id-token: write
 
 jobs:
-  js:
-    name: TypeScript, lint, tests, pack
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      - run: bun run check
-      - run: bun run --cwd packages/react-native-nitro-wallet pack:dry-run
-
-  native-lint:
-    name: Native formatting and lint
+  release:
+    name: Version, tag, GitHub release, npm publish
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
-      - run: brew install swiftformat swiftlint ktlint detekt
-      - run: bun install --frozen-lockfile
-      - run: bun run lint:native
-
-  android:
-    name: Android example build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
       - uses: android-actions/setup-android@v3
+      - run: brew install swiftformat swiftlint ktlint detekt
       - run: yes | sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0" "cmake;3.22.1" "ndk;27.1.12297006"
+      - run: npm install -g npm@latest
       - run: bun install --frozen-lockfile
       - run: ./gradlew assembleDebug --no-daemon
         working-directory: apps/example/android
-
-  ios:
-    name: iOS NitroWallet pod build
-    runs-on: macos-15
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
       - run: bundle install
         working-directory: apps/example
       - run: bundle exec pod install
@@ -64,3 +50,6 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
         working-directory: apps/example/ios
+      - run: bun run release --ci --npm.skipChecks ${{ inputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

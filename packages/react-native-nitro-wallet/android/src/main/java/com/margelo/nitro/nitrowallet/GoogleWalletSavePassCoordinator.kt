@@ -8,108 +8,131 @@ import com.google.android.gms.pay.PayClient
 import com.margelo.nitro.core.Promise
 
 final class GoogleWalletSavePassCoordinator {
-  private val lock = Any()
-  private var pendingPromise: Promise<SaveGoogleWalletPassResult>? = null
-  private var registeredContext: ReactApplicationContext? = null
+    private val lock = Any()
+    private var pendingPromise: Promise<SaveGoogleWalletPassResult>? = null
+    private var registeredContext: ReactApplicationContext? = null
 
-  private val activityEventListener = object : BaseActivityEventListener() {
-    override fun onActivityResult(
-      activity: Activity,
-      requestCode: Int,
-      resultCode: Int,
-      data: Intent?,
-    ) {
-      if (requestCode != ADD_TO_GOOGLE_WALLET_REQUEST_CODE) {
-        return
-      }
+    private val activityEventListener = object : BaseActivityEventListener() {
+        override fun onActivityResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent?) {
+            if (requestCode != ADD_TO_GOOGLE_WALLET_REQUEST_CODE) {
+                return
+            }
 
-      when (resultCode) {
-        Activity.RESULT_OK -> resolvePending(SaveGoogleWalletPassResult(SaveGoogleWalletPassStatus.SAVED))
-        Activity.RESULT_CANCELED -> resolvePending(
-          SaveGoogleWalletPassResult(SaveGoogleWalletPassStatus.CANCELLED)
-        )
-        PayClient.SavePassesResult.API_UNAVAILABLE -> rejectPending(
-          WalletException("Google Wallet save passes API is unavailable.")
-        )
-        PayClient.SavePassesResult.INTERNAL_ERROR -> rejectPending(
-          WalletException("Google Wallet reported an internal save error.")
-        )
-        PayClient.SavePassesResult.SAVE_ERROR -> {
-          val message = data?.getStringExtra(PayClient.EXTRA_API_ERROR_MESSAGE)
-            ?: "Google Wallet failed to save the pass."
-          rejectPending(WalletException(message))
+            when (resultCode) {
+                Activity.RESULT_OK -> resolvePending(
+                    SaveGoogleWalletPassResult(SaveGoogleWalletPassStatus.SAVED)
+                )
+
+                Activity.RESULT_CANCELED -> resolvePending(
+                    SaveGoogleWalletPassResult(SaveGoogleWalletPassStatus.CANCELLED)
+                )
+
+                PayClient.SavePassesResult.API_UNAVAILABLE -> rejectPending(
+                    WalletException("Google Wallet save passes API is unavailable.")
+                )
+
+                PayClient.SavePassesResult.INTERNAL_ERROR -> rejectPending(
+                    WalletException("Google Wallet reported an internal save error.")
+                )
+
+                PayClient.SavePassesResult.SAVE_ERROR -> {
+                    val message = data?.getStringExtra(PayClient.EXTRA_API_ERROR_MESSAGE)
+                        ?: "Google Wallet failed to save the pass."
+                    rejectPending(WalletException(message))
+                }
+
+                else -> rejectPending(
+                    WalletException("Google Wallet returned unknown result code $resultCode.")
+                )
+            }
         }
-        else -> rejectPending(WalletException("Google Wallet returned unknown result code $resultCode."))
-      }
-    }
-  }
-
-  fun save(
-    context: ReactApplicationContext,
-    payClient: PayClient,
-    options: SaveGoogleWalletPassOptions,
-  ): Promise<SaveGoogleWalletPassResult> {
-    val activity = context.currentActivity
-      ?: return Promise.rejected(WalletException("Current Android Activity is unavailable."))
-
-    val promise = Promise<SaveGoogleWalletPassResult>()
-    synchronized(lock) {
-      if (pendingPromise != null) {
-        return Promise.rejected(WalletException("Another Google Wallet save flow is already in progress."))
-      }
-
-      pendingPromise = promise
-      registeredContext = context
-      context.addActivityEventListener(activityEventListener)
     }
 
-    activity.runOnUiThread {
-      try {
-        when (options.format) {
-          GoogleWalletPassFormat.JWT -> payClient.savePassesJwt(
-            options.value,
-            activity,
-            ADD_TO_GOOGLE_WALLET_REQUEST_CODE,
-          )
-          GoogleWalletPassFormat.JSON -> payClient.savePasses(
-            options.value,
-            activity,
-            ADD_TO_GOOGLE_WALLET_REQUEST_CODE,
-          )
+    @Suppress("TooGenericExceptionCaught")
+    fun save(
+        context: ReactApplicationContext,
+        payClient: PayClient,
+        options: SaveGoogleWalletPassOptions
+    ): Promise<SaveGoogleWalletPassResult> {
+        val activity = context.currentActivity
+        val promise = Promise<SaveGoogleWalletPassResult>()
+        val rejection = when {
+            activity == null -> Promise.rejected(
+                WalletException("Current Android Activity is unavailable.")
+            )
+
+            !registerPending(context, promise) -> Promise.rejected(
+                WalletException("Another Google Wallet save flow is already in progress.")
+            )
+
+            else -> null
         }
-      } catch (error: Throwable) {
-        rejectPending(error.toWalletException())
-      }
+
+        if (rejection != null) {
+            return rejection
+        }
+
+        requireNotNull(activity).runOnUiThread {
+            try {
+                when (options.format) {
+                    GoogleWalletPassFormat.JWT -> payClient.savePassesJwt(
+                        options.value,
+                        activity,
+                        ADD_TO_GOOGLE_WALLET_REQUEST_CODE
+                    )
+
+                    GoogleWalletPassFormat.JSON -> payClient.savePasses(
+                        options.value,
+                        activity,
+                        ADD_TO_GOOGLE_WALLET_REQUEST_CODE
+                    )
+                }
+            } catch (error: Throwable) {
+                rejectPending(error.toWalletException())
+            }
+        }
+
+        return promise
     }
 
-    return promise
-  }
+    private fun registerPending(context: ReactApplicationContext, promise: Promise<SaveGoogleWalletPassResult>): Boolean {
+        synchronized(lock) {
+            if (pendingPromise != null) {
+                return false
+            }
 
-  private fun resolvePending(result: SaveGoogleWalletPassResult) {
-    val promise = clearPending()
-    promise?.resolve(result)
-  }
-
-  private fun rejectPending(error: Throwable) {
-    val promise = clearPending()
-    promise?.reject(error)
-  }
-
-  private fun clearPending(): Promise<SaveGoogleWalletPassResult>? {
-    val context: ReactApplicationContext?
-    val promise: Promise<SaveGoogleWalletPassResult>?
-
-    synchronized(lock) {
-      promise = pendingPromise
-      context = registeredContext
-      pendingPromise = null
-      registeredContext = null
+            pendingPromise = promise
+            registeredContext = context
+            context.addActivityEventListener(activityEventListener)
+            return true
+        }
     }
 
-    context?.removeActivityEventListener(activityEventListener)
-    return promise
-  }
-  companion object {
-    private const val ADD_TO_GOOGLE_WALLET_REQUEST_CODE = 13045
-  }
+    private fun resolvePending(result: SaveGoogleWalletPassResult) {
+        val promise = clearPending()
+        promise?.resolve(result)
+    }
+
+    private fun rejectPending(error: Throwable) {
+        val promise = clearPending()
+        promise?.reject(error)
+    }
+
+    private fun clearPending(): Promise<SaveGoogleWalletPassResult>? {
+        val context: ReactApplicationContext?
+        val promise: Promise<SaveGoogleWalletPassResult>?
+
+        synchronized(lock) {
+            promise = pendingPromise
+            context = registeredContext
+            pendingPromise = null
+            registeredContext = null
+        }
+
+        context?.removeActivityEventListener(activityEventListener)
+        return promise
+    }
+    companion object {
+        private const val ADD_TO_GOOGLE_WALLET_REQUEST_CODE = 13045
+    }
 }

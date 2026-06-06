@@ -1,0 +1,27 @@
+{
+  "git": {
+    "commitMessage": "chore(release): v${version}",
+    "tagName": "v${version}",
+    "requireCleanWorkingDir": true,
+    "requireUpstream": true
+  },
+  "github": {
+    "release": true
+  },
+  "npm": {
+    "publish": true,
+    "publishArgs": ["--access", "public", "--provenance"]
+  },
+  "hooks": {
+    "before:init": "cd ../.. && bun run prerelease",
+    "after:bump": "cd ../.. && bun install --lockfile-only"
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": {
+        "name": "conventionalcommits"
+      },
+      "infile": "../../CHANGELOG.md"
+    }
+  }
+}

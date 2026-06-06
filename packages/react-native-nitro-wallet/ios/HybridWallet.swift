@@ -25,9 +25,9 @@ final class HybridWallet: HybridWalletSpec {
   func canAddPasses(provider: WalletProvider) throws -> Promise<Bool> {
     switch provider {
     case .appleWallet:
-      return Promise.resolved(withResult: PKAddPassesViewController.canAddPasses())
+      Promise.resolved(withResult: PKAddPassesViewController.canAddPasses())
     case .googleWallet:
-      return Promise.resolved(withResult: false)
+      Promise.resolved(withResult: false)
     }
   }
 
@@ -48,7 +48,7 @@ final class HybridWallet: HybridWalletSpec {
       }
 
       if let httpResponse = response as? HTTPURLResponse,
-         !(200...299).contains(httpResponse.statusCode) {
+         !(200 ... 299).contains(httpResponse.statusCode) {
         promise.reject(withError: walletError("HTTP_ERROR", "HTTP \(httpResponse.statusCode)"))
         return
       }
@@ -81,13 +81,13 @@ final class HybridWallet: HybridWalletSpec {
         promise.reject(withError: walletError("CONTROLLER_ERROR", "Wallet object was released before presenting pass"))
         return
       }
-      self.showAddPassController(with: data, promise: promise)
+      showAddPassController(with: data, promise: promise)
     }
     return promise
   }
 
-  func saveGoogleWalletPass(options: SaveGoogleWalletPassOptions) throws -> Promise<SaveGoogleWalletPassResult> {
-    return Promise.rejected(
+  func saveGoogleWalletPass(options _: SaveGoogleWalletPassOptions) throws -> Promise<SaveGoogleWalletPassResult> {
+    Promise.rejected(
       withError: walletError("UNSUPPORTED_PLATFORM", "Google Wallet save flows are only available on Android")
     )
   }
@@ -104,7 +104,8 @@ final class HybridWallet: HybridWalletSpec {
     let promise = Promise<Bool>()
     DispatchQueue.main.async {
       guard let pass = PKPassLibrary().matchingPass(for: identifier),
-            let passUrl = pass.passURL else {
+            let passUrl = pass.passURL
+      else {
         promise.resolve(withResult: false)
         return
       }

@@ -26,4 +26,5 @@ packages/*/tsconfig.tsbuildinfo
 # Local artifacts
 *.tgz
 *.xcresult
+.watchman-cookie-*
 .DS_Store

@@ -1,0 +1,6 @@
+# Keep Swift formatting focused on owned source files. Generated Nitro output is excluded.
+--swiftversion 5.9
+--indent 2
+--linebreaks lf
+--disable wrapMultilineStatementBraces
+--exclude Pods,build,DerivedData,nitrogen/generated

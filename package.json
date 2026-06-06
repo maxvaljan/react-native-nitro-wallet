@@ -8,10 +8,26 @@
   "scripts": {
     "specs": "bun run --cwd packages/react-native-nitro-wallet specs",
     "check": "bun run specs && bun run --cwd packages/react-native-nitro-wallet build:plugin && bun run --cwd packages/react-native-nitro-wallet typecheck && bun run --cwd packages/react-native-nitro-wallet lint-ci && bun run --cwd apps/example lint && bunx tsc --noEmit -p apps/example/tsconfig.json && bun run test",
+    "prerelease": "bun run check && bun run lint:native && bun run --cwd packages/react-native-nitro-wallet pack:dry-run",
+    "release": "bun run --cwd packages/react-native-nitro-wallet release",
+    "lint:native": "bun run lint:swift && bun run lint:kotlin",
+    "format:native": "bun run format:swift && bun run format:kotlin",
+    "lint:swift": "bun run lint:swiftformat && bun run lint:swiftlint",
+    "format:swift": "scripts/require-native-tool.sh swiftformat 'Install with: brew install swiftformat' && swiftformat --config config/.swiftformat packages/react-native-nitro-wallet/ios apps/example/ios/WalletExample",
+    "lint:swiftformat": "scripts/require-native-tool.sh swiftformat 'Install with: brew install swiftformat' && swiftformat --lint --config config/.swiftformat --reporter github-actions-log packages/react-native-nitro-wallet/ios apps/example/ios/WalletExample",
+    "lint:swiftlint": "scripts/require-native-tool.sh swiftlint 'Install with: brew install swiftlint' && swiftlint lint --config config/.swiftlint.yml --strict packages/react-native-nitro-wallet/ios apps/example/ios/WalletExample",
+    "lint:kotlin": "bun run lint:ktlint && bun run lint:detekt",
+    "format:kotlin": "scripts/require-native-tool.sh ktlint 'Install with: brew install ktlint' && ktlint --format 'packages/react-native-nitro-wallet/android/src/main/java/**/*.kt' 'apps/example/android/app/src/main/java/**/*.kt'",
+    "lint:ktlint": "scripts/require-native-tool.sh ktlint 'Install with: brew install ktlint' && ktlint 'packages/react-native-nitro-wallet/android/src/main/java/**/*.kt' 'apps/example/android/app/src/main/java/**/*.kt'",
+    "lint:detekt": "scripts/require-native-tool.sh detekt 'Install with: brew install detekt' && detekt --build-upon-default-config --config config/detekt.yml --input packages/react-native-nitro-wallet/android/src/main/java,apps/example/android/app/src/main/java",
     "example": "bun run --cwd apps/example",
     "example:android": "bun run --cwd apps/example android",
     "example:ios": "bun run --cwd apps/example ios",
     "example:start": "bun run --cwd apps/example start",
     "test": "bun run --cwd packages/react-native-nitro-wallet test"
+  },
+  "devDependencies": {
+    "@release-it/conventional-changelog": "^11.0.1",
+    "release-it": "^20.2.0"
   }
 }

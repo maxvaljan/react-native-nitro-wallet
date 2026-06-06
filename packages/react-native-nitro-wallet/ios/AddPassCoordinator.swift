@@ -25,8 +25,8 @@ final class AddPassCoordinator: NSObject, PKAddPassesViewControllerDelegate {
   func addPassesViewControllerDidFinish(_ controller: PKAddPassesViewController) {
     controller.dismiss(animated: true) { [weak self] in
       guard let self else { return }
-      let status: AddPassStatus = self.library.containsPass(self.pass) ? .added : .cancelled
-      self.resolve(status: status)
+      let status: AddPassStatus = library.containsPass(pass) ? .added : .cancelled
+      resolve(status: status)
       controller.delegate = nil
     }
   }

@@ -37,6 +37,7 @@
     "lint-ci": "eslint \"**/*.{js,ts,tsx}\" -f @jamesacarr/github-actions --max-warnings 0",
     "typescript": "tsc",
     "pack:dry-run": "bun run build:plugin && bun pm pack --dry-run",
+    "release": "release-it",
     "specs": "tsc --noEmit false && nitrogen --logLevel=\"debug\"",
     "test": "bun run build:plugin && bun test"
   },

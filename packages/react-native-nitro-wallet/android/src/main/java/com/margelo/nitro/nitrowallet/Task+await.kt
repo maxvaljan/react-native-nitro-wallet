@@ -7,22 +7,22 @@ import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.suspendCancellableCoroutine
 
-suspend fun <T> Task<T>.await(): T {
-  return suspendCancellableCoroutine { continuation ->
+suspend fun <T> Task<T>.await(): T = suspendCancellableCoroutine { continuation ->
     addOnSuccessListener { result ->
-      if (continuation.isActive) {
-        continuation.resume(result)
-      }
+        if (continuation.isActive) {
+            continuation.resume(result)
+        }
     }
     addOnFailureListener { error ->
-      if (continuation.isActive) {
-        continuation.resumeWithException(error)
-      }
+        if (continuation.isActive) {
+            continuation.resumeWithException(error)
+        }
     }
     addOnCanceledListener {
-      if (continuation.isActive) {
-        continuation.resumeWithException(CancellationException("Google Play services task was cancelled."))
-      }
+        if (continuation.isActive) {
+            continuation.resumeWithException(
+                CancellationException("Google Play services task was cancelled.")
+            )
+        }
     }
-  }
 }

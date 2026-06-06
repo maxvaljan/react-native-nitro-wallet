@@ -139,6 +139,14 @@ bun run test
 bun run pack:dry-run
 ```
 
+Native formatting and linting are configured at the repository root:
+
+```sh
+brew install swiftformat swiftlint ktlint detekt
+bun run lint:native
+bun run format:native
+```
+
 Generated files under `nitrogen/generated` are part of the package and should be regenerated from the `.nitro.ts` spec instead of edited by hand.
 
 Native wallet UI behavior should be verified on real devices with real Apple Wallet and Google

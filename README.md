@@ -18,6 +18,14 @@ bun run --cwd apps/example lint
 bunx tsc --noEmit -p apps/example/tsconfig.json
 ```
 
+Native formatting and linting:
+
+```sh
+brew install swiftformat swiftlint ktlint detekt
+bun run format:native
+bun run lint:native
+```
+
 Native validation:
 
 ```sh
@@ -35,3 +43,16 @@ bun pm pack --dry-run
 ```
 
 Generated Nitrogen files in `packages/react-native-nitro-wallet/nitrogen/generated` are intentionally included so consumers can build the native module without running codegen themselves.
+
+## Release
+
+Releases are driven from the publishable package with `release-it`:
+
+```sh
+bun run release
+```
+
+The release command runs `bun run prerelease` before versioning or publishing. That gate includes
+the TypeScript checks, JS lint, tests, native linting, and a dry-run package pack. The GitHub Actions
+release workflow uses npm trusted publishing/provenance; configure the package as a trusted
+publisher on npm before running it from GitHub.
