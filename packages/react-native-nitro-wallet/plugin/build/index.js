@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_plugins_1 = require("@expo/config-plugins");
+const config_plugins_1 = require("expo/config-plugins");
 const pkg = require('../../package.json');
 const PASS_TYPE_IDENTIFIERS_KEY = 'com.apple.developer.pass-type-identifiers';
 const normalizePassTypeIdentifiers = (passTypeIdentifiers) => {

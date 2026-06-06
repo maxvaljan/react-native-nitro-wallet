@@ -59,9 +59,6 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "dependencies": {
-    "@expo/config-plugins": "^10.0.0"
-  },
   "devDependencies": {
     "@jamesacarr/eslint-formatter-github-actions": "^0.2.0",
     "@react-native/babel-preset": "0.85.3",
@@ -79,6 +76,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-native": "^5.0.0",
+    "expo": "^56.0.9",
     "nitrogen": "*",
     "prettier": "^3.8.3",
     "react": "19.2.3",

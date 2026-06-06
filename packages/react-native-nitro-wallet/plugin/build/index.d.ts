@@ -1,4 +1,4 @@
-import { type ConfigPlugin } from '@expo/config-plugins';
+import { type ConfigPlugin } from 'expo/config-plugins';
 /**
  * Options for the `react-native-nitro-wallet` Expo config plugin.
  */

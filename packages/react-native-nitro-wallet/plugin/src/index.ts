@@ -2,7 +2,7 @@ import {
   type ConfigPlugin,
   createRunOncePlugin,
   withEntitlementsPlist,
-} from '@expo/config-plugins'
+} from 'expo/config-plugins'
 
 declare const require: {
   (path: '../../package.json'): {
