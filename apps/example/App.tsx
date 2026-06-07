@@ -10,7 +10,10 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { wallet, type WalletCapabilities } from 'react-native-nitro-wallet';
+import {
+  wallet,
+  type WalletCapabilities,
+} from '@maxvaljan/react-native-nitro-wallet-manager';
 
 function App(): React.JSX.Element {
   const [capabilities, setCapabilities] = useState<WalletCapabilities>();

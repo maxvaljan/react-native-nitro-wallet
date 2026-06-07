@@ -1,4 +1,4 @@
-# react-native-nitro-wallet
+# @maxvaljan/react-native-nitro-wallet-manager
 
 React Native Nitro Module for Apple Wallet `.pkpass` flows on iOS and Google Wallet save flows on Android.
 
@@ -13,7 +13,7 @@ React Native Nitro Module for Apple Wallet `.pkpass` flows on iOS and Google Wal
 ## Install
 
 ```sh
-bun add react-native-nitro-wallet react-native-nitro-modules
+bun add @maxvaljan/react-native-nitro-wallet-manager react-native-nitro-modules
 ```
 
 Run your normal native install, prebuild, or development-build flow after installing.
@@ -34,7 +34,7 @@ handle the native integration.
 For Expo apps, install the package and run your usual prebuild or development-build workflow:
 
 ```sh
-bun add react-native-nitro-wallet react-native-nitro-modules
+bun add @maxvaljan/react-native-nitro-wallet-manager react-native-nitro-modules
 bun expo prebuild
 ```
 
@@ -47,7 +47,7 @@ managing passes exposed by PassKit:
   "expo": {
     "plugins": [
       [
-        "react-native-nitro-wallet",
+        "@maxvaljan/react-native-nitro-wallet-manager",
         {
           "passTypeIdentifiers": ["$(TeamIdentifierPrefix)*"]
         }
@@ -74,7 +74,7 @@ and the payload passed to `saveGoogleWalletPass` must be a valid Google Wallet J
 ## Usage
 
 ```ts
-import { wallet } from 'react-native-nitro-wallet'
+import { wallet } from '@maxvaljan/react-native-nitro-wallet-manager'
 
 const canAddApplePass = await wallet.canAddPasses('apple-wallet')
 

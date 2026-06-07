@@ -19,7 +19,7 @@ const pkg = require('../../package.json') as {
 const PASS_TYPE_IDENTIFIERS_KEY = 'com.apple.developer.pass-type-identifiers'
 
 /**
- * Options for the `react-native-nitro-wallet` Expo config plugin.
+ * Options for the `@maxvaljan/react-native-nitro-wallet-manager` Expo config plugin.
  */
 export interface NitroWalletPluginOptions {
   /**
@@ -42,14 +42,14 @@ const normalizePassTypeIdentifiers = (
 
   if (!Array.isArray(passTypeIdentifiers)) {
     throw new Error(
-      'react-native-nitro-wallet: passTypeIdentifiers must be an array of strings.'
+      '@maxvaljan/react-native-nitro-wallet-manager: passTypeIdentifiers must be an array of strings.'
     )
   }
 
   const normalized = passTypeIdentifiers.map((identifier) => {
     if (typeof identifier !== 'string' || identifier.trim().length === 0) {
       throw new Error(
-        'react-native-nitro-wallet: passTypeIdentifiers must contain non-empty strings.'
+        '@maxvaljan/react-native-nitro-wallet-manager: passTypeIdentifiers must contain non-empty strings.'
       )
     }
 

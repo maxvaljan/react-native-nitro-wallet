@@ -1,6 +1,6 @@
 {
-  "name": "react-native-nitro-wallet",
-  "version": "0.0.1",
+  "name": "@maxvaljan/react-native-nitro-wallet-manager",
+  "version": "0.1.0",
   "description": "React Native Nitro Module for Apple Wallet passes and Google Wallet save flows.",
   "main": "lib/index",
   "module": "lib/index",

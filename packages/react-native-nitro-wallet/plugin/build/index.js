@@ -8,11 +8,11 @@ const normalizePassTypeIdentifiers = (passTypeIdentifiers) => {
         return [];
     }
     if (!Array.isArray(passTypeIdentifiers)) {
-        throw new Error('react-native-nitro-wallet: passTypeIdentifiers must be an array of strings.');
+        throw new Error('@maxvaljan/react-native-nitro-wallet-manager: passTypeIdentifiers must be an array of strings.');
     }
     const normalized = passTypeIdentifiers.map((identifier) => {
         if (typeof identifier !== 'string' || identifier.trim().length === 0) {
-            throw new Error('react-native-nitro-wallet: passTypeIdentifiers must contain non-empty strings.');
+            throw new Error('@maxvaljan/react-native-nitro-wallet-manager: passTypeIdentifiers must contain non-empty strings.');
         }
         return identifier.trim();
     });

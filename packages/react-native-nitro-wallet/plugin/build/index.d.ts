@@ -1,6 +1,6 @@
 import { type ConfigPlugin } from 'expo/config-plugins';
 /**
- * Options for the `react-native-nitro-wallet` Expo config plugin.
+ * Options for the `@maxvaljan/react-native-nitro-wallet-manager` Expo config plugin.
  */
 export interface NitroWalletPluginOptions {
     /**

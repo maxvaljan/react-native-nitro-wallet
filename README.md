@@ -1,4 +1,4 @@
-# react-native-nitro-wallet
+# @maxvaljan/react-native-nitro-wallet-manager
 
 Open-source React Native Nitro Module for wallet pass workflows:
 
